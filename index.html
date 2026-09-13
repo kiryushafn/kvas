@@ -19,6 +19,7 @@
       --bg-card-hover: #181e2c;
       --bg-inner: #07090d;
       --border: rgba(255, 255, 255, 0.08);
+      --border-focus: rgba(245, 158, 11, 0.45);
       
       --text-head: #ffffff;
       --text-body: #9ca3af;
@@ -26,7 +27,7 @@
       
       --amber: #f59e0b;                /* Pantone 16-1350 Amber Glow */
       --amber-light: #fbbf24;
-      --amber-glow: rgba(245, 158, 11, 0.2);
+      --amber-glow: rgba(245, 158, 11, 0.22);
       
       --emerald: #10b981;              /* Pantone Emerald */
       --emerald-glow: rgba(16, 185, 129, 0.2);
@@ -34,6 +35,7 @@
       --rose-tint: rgba(244, 63, 94, 0.12);
       
       --nav-glass: rgba(11, 13, 19, 0.94);
+      --modal-bg: #131722;
     }
 
     :root[data-theme="light"] {
@@ -42,6 +44,7 @@
       --bg-card-hover: #f8fafc;
       --bg-inner: #eef2f6;
       --border: rgba(0, 0, 0, 0.07);
+      --border-focus: rgba(217, 119, 6, 0.4);
       
       --text-head: #0f172a;
       --text-body: #475569;
@@ -57,6 +60,7 @@
       --rose-tint: rgba(225, 29, 72, 0.08);
       
       --nav-glass: rgba(245, 247, 250, 0.94);
+      --modal-bg: #ffffff;
     }
 
     * {
@@ -77,7 +81,7 @@
       flex-direction: column;
       -webkit-font-smoothing: antialiased;
       line-height: 1.5;
-      padding-bottom: calc(20px + env(safe-area-inset-bottom));
+      padding-bottom: calc(24px + env(safe-area-inset-bottom));
     }
 
     h1, h2, h3, h4, .brand-title {
@@ -90,13 +94,13 @@
     }
 
     .container {
-      max-width: 600px; /* Оптимально для экранов смартфонов в Telegram */
+      max-width: 580px;
       margin: 0 auto;
       padding: 0 16px;
       width: 100%;
     }
 
-    /* ШАПКА TWA */
+    /* ШАПКА */
     header {
       height: 56px;
       background: var(--nav-glass);
@@ -210,6 +214,10 @@
       box-shadow: 0 4px 14px var(--amber-glow);
     }
 
+    .btn-amber:hover {
+      background: var(--amber-light);
+    }
+
     .btn-card {
       background: var(--bg-card);
       color: var(--text-head);
@@ -230,7 +238,6 @@
       letter-spacing: 0.5px;
     }
 
-    /* ОСНОВНОЙ КОНТЕНТ */
     main {
       padding: 16px 0;
       display: flex;
@@ -295,7 +302,7 @@
 
     .days-count {
       font-family: 'Unbounded', sans-serif;
-      font-size: 2.4rem;
+      font-size: 2.5rem;
       font-weight: 800;
       color: var(--text-head);
       line-height: 1;
@@ -381,11 +388,7 @@
       flex: 1;
     }
 
-    /* ПЛАТО ИНСТРУКЦИИ */
-    .instruction-plate {
-      border: 1px solid var(--border);
-    }
-
+    /* ИНСТРУКЦИЯ */
     .plate-tabs {
       display: flex;
       background: var(--bg-inner);
@@ -460,40 +463,194 @@
       color: var(--text-muted);
     }
 
-    /* МОНИТОРИНГ СЕРВЕРОВ */
-    .server-row {
+    /* РЕФЕРАЛЬНЫЙ БЛОК */
+    .ref-stats-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      margin: 4px 0;
+    }
+
+    .ref-stat-box {
+      background: var(--bg-inner);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 12px;
+      text-align: center;
+    }
+
+    .ref-stat-num {
+      font-family: 'Unbounded', sans-serif;
+      font-size: 1.4rem;
+      font-weight: 800;
+      color: var(--amber);
+    }
+
+    .ref-stat-label {
+      font-size: 0.72rem;
+      color: var(--text-muted);
+    }
+
+    .ref-link-box {
+      background: var(--bg-inner);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 8px 12px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+    }
+
+    .ref-link-text {
+      font-size: 0.75rem;
+      color: var(--text-head);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    /* ==========================================================
+       ВСПЛЫВАЮЩЕЕ МЕНЮ ТАРИФОВ (MODAL BOTTOM SHEET)
+       ========================================================== */
+    .tariff-modal-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.7);
+      backdrop-filter: blur(6px);
+      z-index: 200;
+      opacity: 0;
+      visibility: hidden;
+      transition: all 0.25s ease;
+      display: flex;
+      align-items: flex-end;
+      justify-content: center;
+    }
+
+    .tariff-modal-overlay.active {
+      opacity: 1;
+      visibility: visible;
+    }
+
+    .tariff-modal {
+      background: var(--modal-bg);
+      border: 1px solid var(--border);
+      border-radius: 24px 24px 0 0;
+      width: 100%;
+      max-width: 540px;
+      padding: 24px 20px calc(24px + env(safe-area-inset-bottom));
+      transform: translateY(100%);
+      transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+      display: flex;
+      flex-direction: column;
+      gap: 18px;
+      box-shadow: 0 -10px 40px rgba(0, 0, 0, 0.4);
+    }
+
+    .tariff-modal-overlay.active .tariff-modal {
+      transform: translateY(0);
+    }
+
+    .modal-drag-handle {
+      width: 44px;
+      height: 5px;
+      background: var(--text-muted);
+      opacity: 0.3;
+      border-radius: 10px;
+      margin: 0 auto -6px;
+    }
+
+    .modal-head {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      background: var(--bg-inner);
-      padding: 9px 12px;
-      border-radius: 10px;
+    }
+
+    .selector-label {
       font-size: 0.8rem;
+      font-weight: 700;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-bottom: 8px;
     }
 
-    .server-name {
-      display: flex;
-      align-items: center;
+    /* Сетка длительности */
+    .period-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
       gap: 8px;
-      color: var(--text-head);
-      font-weight: 600;
     }
 
-    .server-ping {
+    .period-card {
+      background: var(--bg-inner);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 12px;
+      cursor: pointer;
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+      position: relative;
+    }
+
+    .period-card.active {
+      border-color: var(--amber);
+      background: var(--amber-glow);
+    }
+
+    .period-card .p-days {
+      font-weight: 700;
+      font-size: 0.95rem;
+      color: var(--text-head);
+    }
+
+    .period-card .p-discount {
+      font-size: 0.72rem;
       color: var(--emerald);
       font-weight: 700;
-      font-size: 0.76rem;
     }
 
-    /* РЕФЕРАЛКА */
-    .ref-header h4 {
-      font-size: 1rem;
-      margin-bottom: 2px;
+    /* Выбор устройств (минимум 3) */
+    .devices-row {
+      display: flex;
+      gap: 8px;
     }
 
-    .ref-header p {
-      font-size: 0.8rem;
-      color: var(--text-muted);
+    .device-opt {
+      flex: 1;
+      background: var(--bg-inner);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 10px 6px;
+      text-align: center;
+      cursor: pointer;
+      font-weight: 700;
+      font-size: 0.82rem;
+      color: var(--text-body);
+    }
+
+    .device-opt.active {
+      border-color: var(--amber);
+      background: var(--amber);
+      color: #000;
+    }
+
+    /* Итоговая полоса цен */
+    .pricing-summary {
+      background: var(--bg-inner);
+      border-radius: 14px;
+      padding: 14px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .total-price {
+      font-family: 'Unbounded', sans-serif;
+      font-size: 1.6rem;
+      font-weight: 800;
+      color: var(--amber);
     }
 
     /* QR МОДАЛКА */
@@ -502,7 +659,7 @@
       inset: 0;
       background: rgba(0, 0, 0, 0.7);
       backdrop-filter: blur(5px);
-      z-index: 100;
+      z-index: 300;
       display: flex;
       align-items: center;
       justify-content: center;
@@ -518,7 +675,7 @@
     }
 
     .qr-box {
-      background: var(--bg-card);
+      background: var(--modal-bg);
       border: 1px solid var(--border);
       border-radius: 20px;
       padding: 24px;
@@ -551,7 +708,7 @@
       border-radius: 30px;
       font-weight: 700;
       font-size: 0.82rem;
-      z-index: 110;
+      z-index: 400;
       opacity: 0;
       pointer-events: none;
       transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
@@ -565,7 +722,7 @@
 </head>
 <body>
 
-  <!-- ШАПКА С TELEGRAM КНОПКАМИ -->
+  <!-- ШАПКА -->
   <header>
     <div class="container header-content">
       <div class="brand-group">
@@ -576,7 +733,7 @@
       <div class="header-actions">
         <div class="user-pill mono">
           <span class="pulse-dot"></span>
-          <span id="tgUserId">ID: ...</span>
+          <span id="tgUserId">ID: 84219920</span>
         </div>
 
         <button class="icon-btn" id="themeBtn" title="Тема">
@@ -588,29 +745,30 @@
 
   <main class="container">
 
-    <!-- 1. ПРИВЕТСТВИЕ ПОЛЬЗОВАТЕЛЯ ИЗ TELEGRAM -->
+    <!-- 1. ПРИВЕТСТВИЕ -->
     <div class="card">
       <div class="tg-welcome">
         <div class="tg-user-avatar" id="userAvatar">ТГ</div>
         <div class="tg-welcome-text">
           <h2>Привет, <span id="userName" style="color: var(--amber)">друг</span>! 🍺</h2>
-          <p>Твой интернет под защитой протокола Reality</p>
+          <p>YouTube в 4K и Discord работают на максимуме</p>
         </div>
       </div>
-      <button class="btn btn-amber" id="directConnectBtn">⚡ Подключить это устройство в 1 клик</button>
+      <button class="btn btn-amber" id="directConnectBtn">⚡ Подключить в 1 клик</button>
     </div>
 
-    <!-- 2. СТАТУС ТАРИФА И СПАСЁННЫЙ ТРАФИК -->
+    <!-- 2. СТАТУС ТАРИФА (ДНИ ДИНАМИЧЕСКИ МЕНЯЮТСЯ) -->
     <div class="card">
       <div class="card-topline">
-        <span class="badge">Подписка</span>
-        <span class="mono" style="color: var(--emerald); font-size: 0.78rem; font-weight: 700;">● Безлимит активен</span>
+        <span class="badge">Твой тариф</span>
+        <span class="mono" style="color: var(--emerald); font-size: 0.78rem; font-weight: 700;">● Безлимит</span>
       </div>
 
       <div class="days-row">
-        <span class="days-count">42</span>
+        <span class="days-count" id="activeDaysCount">42</span>
         <span style="color: var(--text-muted); font-size: 1rem;">дня осталось</span>
       </div>
+      <p style="font-size: 0.78rem; color: var(--text-muted);" id="activeTariffInfo">Лимит: 3 устройства • VLESS Reality</p>
 
       <!-- Виджет трафика -->
       <div class="traffic-widget">
@@ -631,8 +789,9 @@
       </div>
 
       <div style="display: flex; gap: 8px;">
-        <button class="btn btn-amber" style="flex: 1;" onclick="extendTariff()">Продлить (+180 дней)</button>
-        <button class="btn btn-card" onclick="toast('Тариф переключен на годовой')">Тарифы</button>
+        <!-- КНОПКА ОТКРЫТИЯ ВСПЛЫВАЮЩЕГО МЕНЮ ТАРИФОВ -->
+        <button class="btn btn-amber" style="flex: 1;" id="openTariffsBtn">Продлить доступ</button>
+        <button class="btn btn-card" id="openTariffsSecondaryBtn">Тарифы</button>
       </div>
     </div>
 
@@ -646,7 +805,7 @@
       <div class="split-toggle-box">
         <div>
           <h5 style="font-size: 0.85rem; color: var(--text-head);">Умный обход (РФ напрямую)</h5>
-          <p style="font-size: 0.75rem; color: var(--text-muted);">Банки и Госуслуги работают на родной скорости</p>
+          <p style="font-size: 0.75rem; color: var(--text-muted);">Банки и Госуслуги не тормозят</p>
         </div>
         <div class="toggle-pill" id="splitToggle"></div>
       </div>
@@ -657,19 +816,18 @@
       </div>
 
       <div style="display: flex; gap: 8px;">
-        <button class="btn btn-card" style="flex: 1;" id="openQrBtn">📷 QR-код для телефона</button>
-        <button class="btn btn-card" onclick="document.getElementById('guideSection').scrollIntoView({behavior: 'smooth'})">Гайд ↓</button>
+        <button class="btn btn-card" style="flex: 1;" id="openQrBtn">📷 QR-код</button>
+        <button class="btn btn-card" onclick="document.getElementById('guideSection').scrollIntoView({behavior: 'smooth'})">Инструкция ↓</button>
       </div>
     </div>
 
-    <!-- 4. ИНТЕРАКТИВНОЕ ПЛАТО ИНСТРУКЦИИ -->
-    <div class="card instruction-plate" id="guideSection">
+    <!-- 4. ИНСТРУКЦИЯ НАСТРОЙКИ -->
+    <div class="card" id="guideSection">
       <div class="card-topline">
-        <span class="badge">Настройка за 1 минуту</span>
+        <span class="badge">Инструкция</span>
         <span class="mono" style="font-size: 0.75rem; color: var(--text-muted);">Все платформы</span>
       </div>
 
-      <!-- Табы -->
       <div class="plate-tabs">
         <button class="p-tab active" data-tab="ios">🍏 iPhone</button>
         <button class="p-tab" data-tab="android">🤖 Android</button>
@@ -677,7 +835,6 @@
         <button class="p-tab" data-tab="router">📡 Роутер</button>
       </div>
 
-      <!-- Шаги iOS -->
       <div class="steps-list guide-content" id="guide-ios">
         <div class="step-item">
           <div class="step-num">1</div>
@@ -690,106 +847,166 @@
           <div class="step-num">2</div>
           <div class="step-text">
             <h5>Нажми «Подключить в 1 клик»</h5>
-            <p>Или скопируй ключ и отсканируй QR-код камерой</p>
+            <p>Конфигурация сразу добавится в приложение</p>
           </div>
         </div>
         <div class="step-item">
           <div class="step-num">3</div>
           <div class="step-text">
-            <h5>Врубай КВАС</h5>
+            <h5>Врубай защиту</h5>
             <p>YouTube в 4K и Discord заработают сразу</p>
           </div>
         </div>
       </div>
 
-      <!-- Шаги Android -->
       <div class="steps-list guide-content" id="guide-android" style="display: none;">
         <div class="step-item">
           <div class="step-num">1</div>
           <div class="step-text">
             <h5>Установи Hiddify из Google Play</h5>
-            <p>Надежное открытое приложение</p>
+            <p>Надежное приложение с открытым кодом</p>
           </div>
         </div>
         <div class="step-item">
           <div class="step-num">2</div>
           <div class="step-text">
             <h5>Нажми (+) → «Из буфера»</h5>
-            <p>Ключ подтянется в список серверов</p>
+            <p>Ключ автоматически загрузится</p>
           </div>
         </div>
       </div>
 
-      <!-- Шаги ПК -->
       <div class="steps-list guide-content" id="guide-pc" style="display: none;">
         <div class="step-item">
           <div class="step-num">1</div>
           <div class="step-text">
-            <h5>Скачай Hiddify (Windows) или Sing-box (Mac)</h5>
-            <p>Минимальный пинг для онлайн-игр и Discord</p>
+            <h5>Скачай Hiddify (Win) или Sing-box (Mac)</h5>
+            <p>Минимальный пинг для игр и войса</p>
           </div>
         </div>
         <div class="step-item">
           <div class="step-num">2</div>
           <div class="step-text">
-            <h5>Нажми Ctrl + V в окне программы</h5>
-            <p>Включи системный прокси (TUN)</p>
+            <h5>Нажми Ctrl + V в приложении</h5>
+            <p>Включи системный прокси (TUN-режим)</p>
           </div>
         </div>
       </div>
 
-      <!-- Шаги Роутер -->
       <div class="steps-list guide-content" id="guide-router" style="display: none;">
         <div class="step-item">
           <div class="step-num">1</div>
           <div class="step-text">
-            <h5>Роутеры Keenetic и OpenWrt</h5>
-            <p>Раздельный туннель: банки напрямую, ТВ и консоли через VPN</p>
+            <h5>Keenetic и OpenWrt</h5>
+            <p>Раздельный туннель: ТВ и приставки в сети, банки напрямую</p>
           </div>
         </div>
       </div>
     </div>
 
-    <!-- 5. СЕРВЕРЫ И ПИНГ -->
+    <!-- 5. РАБОЧАЯ РЕФЕРАЛЬНАЯ СИСТЕМА -->
     <div class="card">
       <div class="card-topline">
-        <span class="badge">Серверы онлайн</span>
-        <button class="btn-card" style="padding: 3px 8px; font-size: 0.72rem; min-height: 28px;" id="pingBtn">🔄 Обновить</button>
+        <span class="badge">Реферальная программа</span>
+        <span style="font-size: 0.75rem; color: var(--amber); font-weight: 700;">+30 дней за друга</span>
       </div>
 
-      <div style="display: flex; flex-direction: column; gap: 6px;">
-        <div class="server-row">
-          <span class="server-name">🇳🇱 Амстердам #4</span>
-          <span class="server-ping mono"><span class="p-val" data-base="14">14</span> ms</span>
+      <div class="ref-stats-grid">
+        <div class="ref-stat-box">
+          <div class="ref-stat-num" id="refFriendsCount">5</div>
+          <div class="ref-stat-label">Друзей подключено</div>
         </div>
-        <div class="server-row">
-          <span class="server-name">🇩🇪 Франкфурт #2</span>
-          <span class="server-ping mono"><span class="p-val" data-base="22">22</span> ms</span>
-        </div>
-        <div class="server-row">
-          <span class="server-name">🇫🇮 Хельсинки #1</span>
-          <span class="server-ping mono"><span class="p-val" data-base="18">18</span> ms</span>
+        <div class="ref-stat-box">
+          <div class="ref-stat-num" id="refBonusDays">+150</div>
+          <div class="ref-stat-label">Бонусных дней</div>
         </div>
       </div>
-    </div>
 
-    <!-- 6. РЕФЕРАЛЬНАЯ ПРОГРАММА С ШАРИНГОМ В TELEGRAM -->
-    <div class="card">
-      <div class="ref-header">
-        <span class="badge">Бонусная программа</span>
-        <h4 style="margin-top: 6px;">Угости друга квасом (+30 дней)</h4>
-        <p>Друг получает скидку 20%, а тебе добавляется целый месяц безлимитного интернета.</p>
+      <div class="ref-link-box">
+        <span class="ref-link-text mono" id="refLinkText">https://t.me/kvas_vpn_bot?start=ref_84219920</span>
+        <button class="btn btn-card" style="padding: 4px 10px; font-size: 0.75rem; min-height: 30px;" id="copyRefLinkBtn">Копия</button>
       </div>
 
-      <button class="btn btn-amber" id="shareTgBtn">🚀 Отправить приглашение в Telegram</button>
+      <div style="display: flex; gap: 8px;">
+        <button class="btn btn-amber" style="flex: 1;" id="shareTgBtn">🚀 Поделиться в Telegram</button>
+        <button class="btn btn-card" id="testRefBtn" title="Имитация подключения друга">+1 друг (тест)</button>
+      </div>
     </div>
 
   </main>
 
+  <!-- ==========================================================
+       ВСПЛЫВАЮЩЕЕ МЕНЮ ТАРИФОВ (МОДАЛКА ВЫБОРА)
+       ========================================================== -->
+  <div class="tariff-modal-overlay" id="tariffModal">
+    <div class="tariff-modal">
+      <div class="modal-drag-handle"></div>
+      
+      <div class="modal-head">
+        <div>
+          <h3 style="font-size: 1.15rem;">Продление доступа</h3>
+          <p style="font-size: 0.8rem; color: var(--text-muted);">Настройка периода и лимита устройств</p>
+        </div>
+        <button class="icon-btn" id="closeTariffModalBtn">✕</button>
+      </div>
+
+      <!-- 1. Выбор периода -->
+      <div>
+        <div class="selector-label">Срок продления (дни зависят от выбора)</div>
+        <div class="period-grid">
+          <div class="period-card active" data-period="1" data-days="30" data-discount="0">
+            <span class="p-days">1 месяц (30 дн)</span>
+            <span style="font-size: 0.72rem; color: var(--text-muted);">Базовый тариф</span>
+          </div>
+
+          <div class="period-card" data-period="3" data-days="90" data-discount="0.1">
+            <span class="p-days">3 месяца (90 дн)</span>
+            <span class="p-discount">Скидка -10%</span>
+          </div>
+
+          <div class="period-card" data-period="6" data-days="180" data-discount="0.2">
+            <span class="p-days">6 месяцев (180 дн)</span>
+            <span class="p-discount">Скидка -20%</span>
+          </div>
+
+          <div class="period-card" data-period="12" data-days="365" data-discount="0.3">
+            <span class="p-days">1 год (365 дн)</span>
+            <span class="p-discount">Выгода -30% 🔥</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- 2. Выбор количества устройств (Минимум 3) -->
+      <div>
+        <div class="selector-label">Количество устройств (минимум 3)</div>
+        <div class="devices-row">
+          <div class="device-opt active" data-devices="3">3 шт</div>
+          <div class="device-opt" data-devices="5">5 шт</div>
+          <div class="device-opt" data-devices="7">7 шт</div>
+          <div class="device-opt" data-devices="10">10 шт</div>
+        </div>
+      </div>
+
+      <!-- 3. Итоговая стоимость и начисление дней -->
+      <div class="pricing-summary">
+        <div>
+          <div style="font-size: 0.75rem; color: var(--text-muted);">Будет начислено:</div>
+          <div style="font-weight: 700; color: var(--emerald);" id="modalDaysSummary">+30 дней</div>
+        </div>
+        <div style="text-align: right;">
+          <div style="font-size: 0.75rem; color: var(--text-muted);">Итого к оплате:</div>
+          <div class="total-price" id="modalPriceSummary">100 ₽</div>
+        </div>
+      </div>
+
+      <button class="btn btn-amber" id="confirmTariffPayBtn">Оплатить и начислить дни</button>
+    </div>
+  </div>
+
   <!-- QR МОДАЛКА -->
   <div class="qr-modal" id="qrModal">
     <div class="qr-box">
-      <h4 style="font-size: 1rem; margin-bottom: 2px;">Наведи камеру</h4>
+      <h4 style="font-size: 1rem; margin-bottom: 2px;">Камера телефона</h4>
       <p style="font-size: 0.75rem; color: var(--text-muted);">Отсканируй этот код в приложении</p>
       <div class="qr-sim">
         <svg width="150" height="150" viewBox="0 0 24 24" fill="none" stroke="#000" stroke-width="1.8">
@@ -806,11 +1023,13 @@
     </div>
   </div>
 
-  <!-- ТОСТ -->
+  <!-- ТОСТ УВЕДОМЛЕНИЙ -->
   <div class="toast-pill" id="toast">Уведомление</div>
 
   <script>
+    // ==========================================================
     // 1. ИНИЦИАЛИЗАЦИЯ TELEGRAM WEBAPP
+    // ==========================================================
     const tg = window.Telegram?.WebApp;
     if (tg) {
       tg.ready();
@@ -821,7 +1040,6 @@
       } catch(e) {}
     }
 
-    // Виброотклик Telegram (Haptic Feedback)
     function haptic(type = 'light') {
       try {
         if (tg?.HapticFeedback) {
@@ -832,42 +1050,202 @@
       } catch(e) {}
     }
 
-    // 2. ДАННЫЕ ПОЛЬЗОВАТЕЛЯ ИЗ TELEGRAM
     const tgUser = tg?.initDataUnsafe?.user;
+    const userId = tgUser?.id ? String(tgUser.id) : '84219920';
+
     if (tgUser) {
       document.getElementById('userName').textContent = tgUser.first_name || 'друг';
-      document.getElementById('tgUserId').textContent = `ID: ${tgUser.id}`;
-      
+      document.getElementById('tgUserId').textContent = `ID: ${userId}`;
       const initials = (tgUser.first_name?.[0] || 'Т') + (tgUser.last_name?.[0] || 'Г');
       document.getElementById('userAvatar').textContent = initials.toUpperCase();
-    } else {
-      document.getElementById('tgUserId').textContent = 'ID: 8421-9920';
     }
 
-    // 3. ТОСТ
+    // ==========================================================
+    // 2. ДИНАМИЧЕСКИЙ БАЛАНС ДНЕЙ И ТАРИФА
+    // ==========================================================
+    let currentDays = parseInt(localStorage.getItem('kvas_days')) || 42;
+    let currentDevices = parseInt(localStorage.getItem('kvas_devices')) || 3;
+
+    function updateDashboardTariff() {
+      document.getElementById('activeDaysCount').textContent = currentDays;
+      document.getElementById('activeTariffInfo').textContent = `Лимит: ${currentDevices} устройства • VLESS Reality`;
+      localStorage.setItem('kvas_days', currentDays);
+      localStorage.setItem('kvas_devices', currentDevices);
+    }
+    updateDashboardTariff();
+
+    // ==========================================================
+    // 3. КАЛЬКУЛЯТОР ТАРИФОВ (МИНИМУМ 100 ₽ И 3 УСТРОЙСТВА)
+    // ==========================================================
+    // Формула:
+    // База 3 устройства: 100 ₽/мес.
+    // Каждое устройство свыше 3: +20 ₽/мес.
+    // Скидки за срок: 1 мес (0%), 3 мес (10%), 6 мес (20%), 12 мес (30%).
+    let selectedMonths = 1;
+    let selectedDays = 30;
+    let selectedDiscount = 0;
+    let selectedDevices = 3;
+
+    function calculateTariffPrice() {
+      const baseMonthlyForDevices = 100 + (selectedDevices - 3) * 20; // 3 устройства = ровно 100 ₽
+      const totalWithoutDiscount = baseMonthlyForDevices * selectedMonths;
+      const finalPrice = Math.round(totalWithoutDiscount * (1 - selectedDiscount));
+
+      document.getElementById('modalPriceSummary').textContent = `${finalPrice} ₽`;
+      document.getElementById('modalDaysSummary').textContent = `+${selectedDays} дней`;
+      return { price: finalPrice, days: selectedDays, devices: selectedDevices };
+    }
+
+    // Обработка выбора периода
+    const periodCards = document.querySelectorAll('.period-card');
+    periodCards.forEach(card => {
+      card.addEventListener('click', () => {
+        haptic();
+        periodCards.forEach(c => c.classList.remove('active'));
+        card.classList.add('active');
+
+        selectedMonths = parseInt(card.getAttribute('data-period'));
+        selectedDays = parseInt(card.getAttribute('data-days'));
+        selectedDiscount = parseFloat(card.getAttribute('data-discount'));
+        calculateTariffPrice();
+      });
+    });
+
+    // Обработка выбора устройств (3, 5, 7, 10)
+    const deviceOpts = document.querySelectorAll('.device-opt');
+    deviceOpts.forEach(opt => {
+      opt.addEventListener('click', () => {
+        haptic();
+        deviceOpts.forEach(o => o.classList.remove('active'));
+        opt.classList.add('active');
+
+        selectedDevices = parseInt(opt.getAttribute('data-devices'));
+        calculateTariffPrice();
+      });
+    });
+
+    // ==========================================================
+    // 4. УПРАВЛЕНИЕ МОДАЛКОЙ ТАРИФОВ
+    // ==========================================================
+    const tariffModal = document.getElementById('tariffModal');
+    const openTariffsBtn = document.getElementById('openTariffsBtn');
+    const openTariffsSecondaryBtn = document.getElementById('openTariffsSecondaryBtn');
+    const closeTariffModalBtn = document.getElementById('closeTariffModalBtn');
+    const confirmTariffPayBtn = document.getElementById('confirmTariffPayBtn');
+
+    function openModal() {
+      haptic('medium');
+      calculateTariffPrice();
+      tariffModal.classList.add('active');
+    }
+
+    function closeModal() {
+      haptic();
+      tariffModal.classList.remove('active');
+    }
+
+    openTariffsBtn.addEventListener('click', openModal);
+    openTariffsSecondaryBtn.addEventListener('click', openModal);
+    closeTariffModalBtn.addEventListener('click', closeModal);
+    tariffModal.addEventListener('click', (e) => {
+      if (e.target === tariffModal) closeModal();
+    });
+
+    // Оплата и продление: дни начисляются точно по выбранному тарифу
+    confirmTariffPayBtn.addEventListener('click', () => {
+      const { price, days, devices } = calculateTariffPrice();
+
+      currentDays += days;
+      currentDevices = devices;
+      updateDashboardTariff();
+
+      haptic('success');
+      closeModal();
+      toast(`Успешно! Начислено +${days} дней (${devices} устр.)`);
+
+      // Отправляем данные боту
+      if (tg?.sendData) {
+        tg.sendData(JSON.stringify({
+          action: 'tariff_renew',
+          daysAdded: days,
+          devices: devices,
+          price: price
+        }));
+      }
+    });
+
+    // ==========================================================
+    // 5. РАБОЧАЯ РЕФЕРАЛЬНАЯ СИСТЕМА
+    // ==========================================================
+    let refFriends = parseInt(localStorage.getItem('kvas_ref_friends')) || 5;
+    let refBonus = parseInt(localStorage.getItem('kvas_ref_bonus')) || 150;
+
+    const refLink = `https://t.me/kvas_vpn_bot?start=ref_${userId}`;
+    document.getElementById('refLinkText').textContent = refLink;
+
+    function updateRefStats() {
+      document.getElementById('refFriendsCount').textContent = refFriends;
+      document.getElementById('refBonusDays').textContent = `+${refBonus}`;
+      localStorage.setItem('kvas_ref_friends', refFriends);
+      localStorage.setItem('kvas_ref_bonus', refBonus);
+    }
+    updateRefStats();
+
+    // 1) Поделиться ссылкой напрямую в Telegram
+    document.getElementById('shareTgBtn').addEventListener('click', () => {
+      haptic('success');
+      const shareText = "Качай КВАС ВПН — YouTube в 4K и Discord летают без тормозов! Держи скидку 20% 🍺";
+      const tgShareUrl = `https://t.me/share/url?url=${encodeURIComponent(refLink)}&text=${encodeURIComponent(shareText)}`;
+      
+      if (tg?.openTelegramLink) {
+        tg.openTelegramLink(tgShareUrl);
+      } else {
+        window.open(tgShareUrl, '_blank');
+      }
+    });
+
+    // 2) Скопировать ссылку
+    document.getElementById('copyRefLinkBtn').addEventListener('click', () => {
+      navigator.clipboard.writeText(refLink).then(() => {
+        haptic('success');
+        toast('Реферальная ссылка скопирована!');
+      });
+    });
+
+    // 3) Тест приглашения друга (+1 друг и +30 дней к балансу подписки)
+    document.getElementById('testRefBtn').addEventListener('click', () => {
+      refFriends += 1;
+      refBonus += 30;
+      currentDays += 30; // Друг добавляет 30 дней и в активный баланс!
+      updateRefStats();
+      updateDashboardTariff();
+      haptic('success');
+      toast('🎉 Друг подключился! +30 дней начислено');
+    });
+
+    // ==========================================================
+    // 6. ВСПОМОГАТЕЛЬНЫЕ ФУНКЦИИ
+    // ==========================================================
     const toastEl = document.getElementById('toast');
     let toastTimer;
     function toast(text) {
-      haptic('medium');
       toastEl.textContent = text;
       toastEl.classList.add('show');
       clearTimeout(toastTimer);
       toastTimer = setTimeout(() => toastEl.classList.remove('show'), 2200);
     }
 
-    // 4. ТЕМА ОФОРМЛЕНИЯ
+    // Тема
     const themeBtn = document.getElementById('themeBtn');
     const themeEmoji = document.getElementById('themeEmoji');
     const htmlEl = document.documentElement;
 
     function applyTheme(t) {
       htmlEl.setAttribute('data-theme', t);
-      localStorage.setItem('kvas-theme-tma', t);
+      localStorage.setItem('kvas_theme_app', t);
       themeEmoji.textContent = (t === 'light') ? '☀️' : '🌙';
     }
-
-    const saved = localStorage.getItem('kvas-theme-tma') || 'dark';
-    applyTheme(saved);
+    applyTheme(localStorage.getItem('kvas_theme_app') || 'dark');
 
     themeBtn.addEventListener('click', () => {
       haptic();
@@ -875,88 +1253,47 @@
       applyTheme(isDark ? 'light' : 'dark');
     });
 
-    // 5. КОПИРОВАНИЕ КЛЮЧА
+    // Ключ
     document.getElementById('copyKeyBtn').addEventListener('click', () => {
       const key = document.getElementById('vlessKey').textContent;
       navigator.clipboard.writeText(key).then(() => {
         haptic('success');
-        toast('Ключ VLESS скопирован!');
+        toast('Ключ скопирован в буфер!');
       });
     });
 
-    // 6. БЫСТРОЕ ПОДКЛЮЧЕНИЕ В 1 КЛИК
-    function directConnect() {
+    document.getElementById('directConnectBtn').addEventListener('click', () => {
       haptic('medium');
       const key = document.getElementById('vlessKey').textContent;
       window.location.href = key;
-      toast('Открываем приложение VPN...');
-    }
-    document.getElementById('directConnectBtn').addEventListener('click', directConnect);
+      toast('Открываем клиент VPN...');
+    });
 
-    // 7. УМНЫЙ ОБХОД (SPLIT TUNNELING)
+    // Умный обход
     const splitToggle = document.getElementById('splitToggle');
     let splitOn = true;
     splitToggle.addEventListener('click', () => {
       haptic();
       splitOn = !splitOn;
-      if (splitOn) {
-        splitToggle.classList.remove('off');
-        toast('Умный обход включен');
-      } else {
-        splitToggle.classList.add('off');
-        toast('Весь трафик идет через ВПН');
-      }
+      splitToggle.classList.toggle('off', !splitOn);
+      toast(splitOn ? 'Умный обход включен' : 'Весь трафик через ВПН');
     });
 
-    // 8. ПЕРЕКЛЮЧЕНИЕ ВКЛАДОК ИНСТРУКЦИИ
+    // Табы инструкции
     const pTabs = document.querySelectorAll('.p-tab');
     const guideContents = document.querySelectorAll('.guide-content');
-
     pTabs.forEach(tab => {
       tab.addEventListener('click', () => {
         haptic();
         pTabs.forEach(t => t.classList.remove('active'));
         tab.classList.add('active');
-
         const target = tab.getAttribute('data-tab');
         guideContents.forEach(c => c.style.display = 'none');
-        const activeContent = document.getElementById(`guide-${target}`);
-        if (activeContent) activeContent.style.display = 'flex';
+        document.getElementById(`guide-${target}`).style.display = 'flex';
       });
     });
 
-    // 9. ОБНОВЛЕНИЕ ПИНГА
-    document.getElementById('pingBtn').addEventListener('click', () => {
-      haptic();
-      document.querySelectorAll('.p-val').forEach(el => {
-        const base = parseInt(el.getAttribute('data-base'));
-        const jitter = Math.floor(Math.random() * 5) - 2;
-        el.textContent = Math.max(12, base + jitter);
-      });
-      toast('Пинг обновлен');
-    });
-
-    // 10. ШАРИНГ РЕФЕРАЛКИ НАПРЯМУЮ В ЧАТЫ TELEGRAM
-    document.getElementById('shareTgBtn').addEventListener('click', () => {
-      haptic('success');
-      const refUrl = `https://t.me/kvas_vpn_bot?start=ref_${tgUser?.id || '84219920'}`;
-      const shareText = "Держи быстрый КВАС ВПН без тормозов на YouTube и Discord! Дарят скидку 20% 🍺";
-      const tgShareLink = `https://t.me/share/url?url=${encodeURIComponent(refUrl)}&text=${encodeURIComponent(shareText)}`;
-      
-      if (tg?.openTelegramLink) {
-        tg.openTelegramLink(tgShareLink);
-      } else {
-        window.open(tgShareLink, '_blank');
-      }
-    });
-
-    // 11. ПРОДЛЕНИЕ ТАРИФА ЧЕРЕЗ TELEGRAM
-    function extendTariff() {
-      haptic('medium');
-      toast('Счёт сформирован в боте...');
-    }
-
-    // 12. QR МОДАЛКА
+    // QR Модалка
     const qrModal = document.getElementById('qrModal');
     document.getElementById('openQrBtn').addEventListener('click', () => {
       haptic();
